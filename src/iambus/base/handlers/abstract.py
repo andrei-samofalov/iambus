@@ -2,8 +2,8 @@ import abc
 from abc import ABC
 from typing import Self
 
-from pybus.core.api.handlers import AbstractHandler
-from pybus.core.api.typing import MessageType
+from iambus.core.api.handlers import AbstractHandler
+from iambus.core.api.typing import MessageType
 
 
 class HandlerMeta(abc.ABCMeta):

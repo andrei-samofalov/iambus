@@ -2,10 +2,10 @@ import functools
 import inspect
 from logging import getLogger
 
-from pybus.core import helpers
-from pybus.core.api.handlers import AbstractHandlerWrapper
-from pybus.core.api.typing import MessageType
-from pybus.core.types import EMPTY
+from iambus.core import helpers
+from iambus.core.api.handlers import AbstractHandlerWrapper
+from iambus.core.api.typing import MessageType
+from iambus.core.types import EMPTY
 
 logger = getLogger(__name__)
 

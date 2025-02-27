@@ -1,13 +1,13 @@
 import typing as t
 
-from pybus.core.api.typing import (
+from iambus.core.api.typing import (
     EventRouterType,
     HandlerType,
     MessageType,
     PyBusWrappedHandler,
     RequestRouterType,
 )
-from pybus.core.types import EMPTY
+from iambus.core.types import EMPTY
 
 
 @t.runtime_checkable

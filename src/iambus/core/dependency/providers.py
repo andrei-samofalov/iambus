@@ -4,8 +4,8 @@ import typing as t
 from collections import defaultdict
 from logging import getLogger
 
-from pybus.core import exceptions as exc
-from pybus.core import helpers
+from iambus.core import exceptions as exc
+from iambus.core import helpers
 
 logger = getLogger(__name__)
 
@@ -48,7 +48,7 @@ class Provider(metaclass=abc.ABCMeta):
 
     def __class_getitem__(cls, item: ProviderFn):
         if isinstance(item, slice):
-            name, fn = str(item.start), item.stop
+            name, fn, *_ = str(item.start), item.stop
         else:
             raise TypeError(
                 f"{type(item)} not supported for {cls.__name__} generic, "

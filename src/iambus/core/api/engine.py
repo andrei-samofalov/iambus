@@ -3,8 +3,8 @@ import asyncio
 from logging import getLogger
 from typing import Generic, Optional
 
-from pybus.core.api.broker import AbstractBrokerAdapter
-from pybus.core.api.typing import MapReturnType, MessageMapType, MessageType
+from iambus.core.api.broker import AbstractBrokerAdapter
+from iambus.core.api.typing import MapReturnType, MessageMapType, MessageType
 
 logger = getLogger(__name__)
 

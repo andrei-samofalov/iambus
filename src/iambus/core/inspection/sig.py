@@ -1,11 +1,11 @@
 import inspect
 from typing import Any, NamedTuple, Optional
 
-from pybus.core import exceptions as exc
-from pybus.core.api.handlers import HandlerProtocol
-from pybus.core.api.typing import HandlerType, Message
-from pybus.core.inspection import utils
-from pybus.core.types import EMPTY
+from iambus.core import exceptions as exc
+from iambus.core.api.handlers import HandlerProtocol
+from iambus.core.api.typing import HandlerType, Message
+from iambus.core.inspection import utils
+from iambus.core.types import EMPTY
 
 KIND_MAP = {
     "pos_only": inspect.Parameter.POSITIONAL_ONLY,

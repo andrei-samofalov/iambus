@@ -1,24 +1,30 @@
-from pybus.base.dispatcher import Dispatcher as Dispatcher
-from pybus.base.dispatcher import default_dispatcher as dispatcher
-from pybus.base.engine.events import EventEngine as EventEngine
-from pybus.base.engine.requests import RequestEngine as RequestEngine
-from pybus.base.handlers.abstract import PyBusAbstractHandler as AbstractHandler
-from pybus.base.maps import EventHandlerMap as EventHandlerMap
-from pybus.base.maps import RequestHandlerMap as RequestHandlerMap
-from pybus.base.routers.eventrouter import EventRouter as EventRouter
-from pybus.base.routers.requestrouter import RequestRouter as RequestRouter
-from pybus.core.dependency.providers import Singleton as Singleton, Factory as Factory
+import importlib
+import sys
+import types
+import warnings
 
-__all__ = [
-    "AbstractHandler",
-    "Dispatcher",
-    "EventHandlerMap",
-    "EventEngine",
-    "EventRouter",
-    "Factory",
-    "RequestHandlerMap",
-    "RequestEngine",
-    "RequestRouter",
-    "Singleton",
-    "dispatcher",
-]
+
+class PybusRedirector(types.ModuleType):
+    """Module interceptor."""
+
+    def __init__(self):
+        super().__init__("pybus")
+        self._iambus = importlib.import_module("iambus")
+
+    def __getattr__(self, name):
+        warnings.warn(
+            "The 'pybus' package name is deprecated and will be removed in a future release. Use 'iambus' instead.",
+            FutureWarning,
+            stacklevel=2
+        )
+
+        try:
+            return getattr(self._iambus, name)
+        except AttributeError:
+            return importlib.import_module(f"iambus.{name}")
+
+    def __dir__(self):
+        return dir(self._iambus)
+
+
+sys.modules["pybus"] = PybusRedirector()

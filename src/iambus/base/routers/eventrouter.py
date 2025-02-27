@@ -1,6 +1,6 @@
-from pybus.base.engine.events import EventEngine
-from pybus.base.maps import EventHandlerMap
-from pybus.base.routers.messagerouter import AbstractBaseMessageRouter
+from iambus.base.engine.events import EventEngine
+from iambus.base.maps import EventHandlerMap
+from iambus.base.routers.messagerouter import AbstractBaseMessageRouter
 
 
 class EventRouter(AbstractBaseMessageRouter[EventEngine]):

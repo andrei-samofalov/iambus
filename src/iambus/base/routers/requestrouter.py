@@ -1,6 +1,6 @@
-from pybus.base.engine.requests import RequestEngine
-from pybus.base.maps import RequestHandlerMap
-from pybus.base.routers.messagerouter import AbstractBaseMessageRouter
+from iambus.base.engine.requests import RequestEngine
+from iambus.base.maps import RequestHandlerMap
+from iambus.base.routers.messagerouter import AbstractBaseMessageRouter
 
 
 class RequestRouter(AbstractBaseMessageRouter[RequestEngine]):

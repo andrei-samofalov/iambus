@@ -1,4 +1,4 @@
-from pybus.core import helpers
+from iambus.core import helpers
 
 from . import __library_name__
 from .api.typing import HandlerType, MessageType

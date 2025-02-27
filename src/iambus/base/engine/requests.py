@@ -1,7 +1,7 @@
-from pybus.base.engine.events import EventEngine
-from pybus.base.maps import RequestHandlerMap
-from pybus.core.api.engine import AbstractEngine
-from pybus.core.api.typing import MessageType, PyBusWrappedHandler
+from iambus.base.engine.events import EventEngine
+from iambus.base.maps import RequestHandlerMap
+from iambus.core.api.engine import AbstractEngine
+from iambus.core.api.typing import MessageType, PyBusWrappedHandler
 
 
 class RequestEngine(AbstractEngine[RequestHandlerMap]):

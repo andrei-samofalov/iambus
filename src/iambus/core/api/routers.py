@@ -4,17 +4,17 @@ import typing as t
 from collections.abc import Callable
 from typing import Optional
 
-from pybus.core.api.broker import AbstractBrokerAdapter
-from pybus.core.api.dispatcher import DispatcherProtocol
-from pybus.core.api.handlers import HandlerMetaDataProtocol
-from pybus.core.api.maps import AbstractHandlerMap
-from pybus.core.api.typing import (
+from iambus.core.api.broker import AbstractBrokerAdapter
+from iambus.core.api.dispatcher import DispatcherProtocol
+from iambus.core.api.handlers import HandlerMetaDataProtocol
+from iambus.core.api.maps import AbstractHandlerMap
+from iambus.core.api.typing import (
     EngineType,
     HandlerType,
     MessageType,
     PyBusWrappedHandler,
 )
-from pybus.core.types import EMPTY
+from iambus.core.types import EMPTY
 
 
 class AbstractMessageRouter(

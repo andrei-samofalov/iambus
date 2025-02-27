@@ -4,13 +4,9 @@ import logging
 
 from examples.books.messages import CreateBook, BookCreated, BookQuery, BookQueryResult
 from examples.books.models import Book
-from pybus import Dispatcher, RequestRouter
+from pybus import dispatcher as dp
 from pybus.core import signals
 from pybus.core.dependency.providers import Singleton
-
-dp = Dispatcher(
-    queries_router_cls=RequestRouter,  # by default query router is disabled
-)
 
 
 async def get_storage():

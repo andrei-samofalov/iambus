@@ -4,8 +4,8 @@ import inspect
 from types import MappingProxyType
 from typing import Generic
 
-from pybus.core.api.handlers import AbstractHandlerWrapper
-from pybus.core.api.typing import (
+from iambus.core.api.handlers import AbstractHandlerWrapper
+from iambus.core.api.typing import (
     HandlerType,
     MapReturnType,
     MessageType,

@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "async-py-bus"
-version = "0.1.12"
+name = "iambus"
+version = "0.2.12"
 authors = [
     { "name" = "Andrei Samofalov", "email" = "andrei.e.samofalov@gmail.com" }
 ]
@@ -15,9 +15,11 @@ description = "Async message bus framework designed for event-driven, cqrs pytho
 keywords = [
     "python",
     "async",
-    "bus",
-    "edd",
-    "cqrs",
+    "message bus",
+    "queue",
+    "events",
+    "monolith",
+    "modular",
 ]
 
 readme = "README.md"
@@ -46,7 +48,7 @@ dev = [
 package = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/pybus"]
+packages = ["src/pybus", "src/ambus"]
 
 [tool.coverage.report]
 exclude_also = [

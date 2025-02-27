@@ -1,8 +1,8 @@
 import abc
 import typing as t
 
-from pybus.core.api.typing import HandlerType, MessageType, ReturnType
-from pybus.core.types import EMPTY
+from iambus.core.api.typing import HandlerType, MessageType, ReturnType
+from iambus.core.types import EMPTY
 
 
 @t.runtime_checkable

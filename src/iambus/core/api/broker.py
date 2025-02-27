@@ -1,6 +1,6 @@
 import abc
 
-from pybus.core.api.typing import MessageType
+from iambus.core.api.typing import MessageType
 
 
 class AbstractBrokerAdapter(metaclass=abc.ABCMeta):

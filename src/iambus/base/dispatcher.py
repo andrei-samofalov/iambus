@@ -2,14 +2,14 @@ import typing as t
 from logging import getLogger
 from typing import Optional
 
-from pybus.base.handlers.wrapper import HandlerWrapper
-from pybus.base.routers.eventrouter import EventRouter
-from pybus.base.routers.requestrouter import RequestRouter
-from pybus.core import signals
-from pybus.core.api.broker import AbstractBrokerAdapter
-from pybus.core.api.dispatcher import DispatcherProtocol
-from pybus.core.api.typing import HandlerType, MessageType
-from pybus.core.types import EMPTY
+from iambus.base.handlers.wrapper import HandlerWrapper
+from iambus.base.routers.eventrouter import EventRouter
+from iambus.base.routers.requestrouter import RequestRouter
+from iambus.core import signals
+from iambus.core.api.broker import AbstractBrokerAdapter
+from iambus.core.api.dispatcher import DispatcherProtocol
+from iambus.core.api.typing import HandlerType, MessageType
+from iambus.core.types import EMPTY
 
 logger = getLogger('pybus.dispatcher')
 

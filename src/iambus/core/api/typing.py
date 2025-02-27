@@ -1,14 +1,14 @@
 import typing as t
 
 if t.TYPE_CHECKING:
-    from pybus.core.api.engine import AbstractEngine  # noqa
-    from pybus.core.api.handlers import (  # noqa
+    from iambus.core.api.engine import AbstractEngine  # noqa
+    from iambus.core.api.handlers import (  # noqa
         AbstractHandler,
         AbstractHandlerWrapper,
         HandlerMetaDataProtocol,
     )
-    from pybus.core.api.maps import AbstractHandlerMap  # noqa
-    from pybus.core.api.routers import AbstractMessageRouter  # noqa
+    from iambus.core.api.maps import AbstractHandlerMap  # noqa
+    from iambus.core.api.routers import AbstractMessageRouter  # noqa
 
 Message: t.TypeAlias = type[t.Any] | t.Hashable
 MessageType = t.TypeVar("MessageType", bound=Message)

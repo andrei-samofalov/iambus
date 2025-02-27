@@ -1,10 +1,10 @@
 import abc
 import typing as t
 
-from pybus.base.handlers.wrapper import HandlerWrapper
-from pybus.core.api.routers import AbstractMessageRouter
-from pybus.core.api.typing import EngineType, HandlerType, MessageType
-from pybus.core.inspection import sig
+from iambus.base.handlers.wrapper import HandlerWrapper
+from iambus.core.api.routers import AbstractMessageRouter
+from iambus.core.api.typing import EngineType, HandlerType, MessageType
+from iambus.core.inspection import sig
 
 
 class AbstractBaseMessageRouter(

@@ -1,8 +1,8 @@
 import inspect
 from typing import Any
 
-from pybus.core.dependency.providers import Provider
-from pybus.core.types import ProtocolType
+from iambus.core.dependency.providers import Provider
+from iambus.core.types import ProtocolType
 
 isfun = inspect.isfunction
 iscoro = inspect.iscoroutinefunction
@@ -26,7 +26,7 @@ def implements_protocol(cls: Any, protocol: ProtocolType):
             continue
 
         protocol_member = getattr(protocol, name)
-        if not (isfun(protocol_member) or isfun(protocol_member)):
+        if not (isfun(protocol_member) or iscoro(protocol_member)):
             continue
 
         class_member = getattr(cls, name, None)

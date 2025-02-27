@@ -1,15 +1,15 @@
 from typing import NamedTuple, Optional, TypeVar
 
-from pybus.base.handlers.wrapper import HandlerWrapper
-from pybus.core.api.maps import AbstractHandlerMap
-from pybus.core.api.typing import (
+from iambus.base.handlers.wrapper import HandlerWrapper
+from iambus.core.api.maps import AbstractHandlerMap
+from iambus.core.api.typing import (
     HandlerType,
     MapReturnType,
     MessageType,
     PyBusHandlerMeta,
 )
-from pybus.core.exceptions import HandlerDoesNotExist
-from pybus.core.types import EMPTY
+from iambus.core.exceptions import HandlerDoesNotExist
+from iambus.core.types import EMPTY
 
 EmptySet = frozenset()
 HandlerFrozenSet = TypeVar("HandlerFrozenSet", bound=frozenset[HandlerType])

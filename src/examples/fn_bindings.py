@@ -4,7 +4,7 @@ import logging
 
 from examples.books.messages import CreateBook, BookCreated, BookQuery, BookQueryResult
 from examples.books.models import Book
-from pybus import Dispatcher, RequestRouter
+from pybus import dispatcher as dp
 from pybus.core import signals
 
 
@@ -49,10 +49,6 @@ async def on_start() -> None:
 async def main() -> None:
     """Application entrypoint"""
     logging.basicConfig(level=logging.DEBUG)
-
-    dp = Dispatcher(
-        queries_router_cls=RequestRouter,  # by default query router is disabled
-    )
 
     # simple dictionary storage for example
     storage = {}
