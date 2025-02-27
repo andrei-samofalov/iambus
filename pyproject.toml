@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "iambus"
-version = "0.2.12"
+version = "0.2.0"
 authors = [
     { "name" = "Andrei Samofalov", "email" = "andrei.e.samofalov@gmail.com" }
 ]
