@@ -2,23 +2,23 @@ import abc
 import functools
 import typing as t
 from collections.abc import Callable
-from typing import Optional
+from typing import Optional, AnyStr
 
-from iambus.core.api.broker import AbstractBrokerAdapter
 from iambus.core.api.dispatcher import DispatcherProtocol
 from iambus.core.api.handlers import HandlerMetaDataProtocol
 from iambus.core.api.maps import AbstractHandlerMap
+from iambus.core.api.typedef import RequestObject, UNHANDLED
 from iambus.core.api.typing import (
     EngineType,
     HandlerType,
     MessageType,
-    PyBusWrappedHandler,
+    WrappedHandler,
 )
 from iambus.core.types import EMPTY
 
 
 class AbstractMessageRouter(
-    t.Generic[EngineType, PyBusWrappedHandler],
+    t.Generic[EngineType, WrappedHandler],
     metaclass=abc.ABCMeta,
 ):
     """Router protocol."""
@@ -30,11 +30,22 @@ class AbstractMessageRouter(
         self._map = self.get_map()
         self._engine: Optional[EngineType] = None
 
-    async def send(self, message: MessageType) -> None:
-        """Send message to the bus."""
-        assert self._dispatcher.is_started, "you should start the dispatcher first"
+    async def handle(
+        self,
+        message: MessageType,
+        *,
+        key: Optional[AnyStr] = None,
+        wait_for_response: bool = False,
+    ) -> t.Awaitable[...]:
+        """Handle message with optional partition key."""
         assert self._engine.is_started, "you should start the engine first"
-        await self._engine.put_to_queue(message)
+
+        if not self._map.can_handle(message):
+            return UNHANDLED
+
+        return await self._engine.put_to_queue(
+            RequestObject(message=message, key=key, wait_for_response=wait_for_response)
+        )
 
     @property
     def engine(self) -> EngineType:
@@ -53,22 +64,36 @@ class AbstractMessageRouter(
         message: MessageType,
         handler: HandlerType,
         argname: t.Optional[str] = EMPTY,
+        response_event: t.Optional[MessageType] = None,
         **initkwargs,
-    ) -> PyBusWrappedHandler:
+    ) -> WrappedHandler:
         """Bind handler for the given message."""
-        meta = self.get_meta(message, handler, argname, **initkwargs)
+        meta = self.get_meta(
+            message,
+            handler,
+            argname,
+            response_event,
+            **initkwargs
+        )
         return self._map.wrap_handler(meta)
 
     def register(
         self,
         message: MessageType,
         argname: t.Optional[str] = EMPTY,
+        response_event: t.Optional[MessageType] = None,
         **initkwargs,
     ) -> Callable:
         """Register handler for the given message as decorator."""
 
         def _wrapper(handler: HandlerType):
-            wrapped_handler = self.bind(message, handler, argname, **initkwargs)
+            wrapped_handler = self.bind(
+                message,
+                handler,
+                argname,
+                response_event,
+                **initkwargs
+            )
 
             @functools.wraps(handler)
             async def _decorated(*args, **kwargs):
@@ -84,6 +109,7 @@ class AbstractMessageRouter(
         message: MessageType,
         handler: HandlerType,
         argname: t.Optional[str],
+        response_event: t.Optional[MessageType],
         **initkwargs,
     ) -> HandlerMetaDataProtocol:
         """Return Handler meta"""
@@ -92,12 +118,8 @@ class AbstractMessageRouter(
     def get_engine(self):
         """Set up the engine for this router."""
 
-    def setup(self, name: Optional[str] = None, broker: Optional[AbstractBrokerAdapter] = None):
+    def setup(self, workers: int):
         """setup map, routes, ..."""
         self._map.build()
-
         self._engine = self.get_engine()
-        self._engine.set_name(name)
-        self._engine.setup_broker(broker=broker)
-
-        self._engine.start()
+        self._engine.start(workers=workers)

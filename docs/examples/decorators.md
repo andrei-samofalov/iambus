@@ -3,15 +3,11 @@ import asyncio
 import dataclasses
 import logging
 
-from examples.books.messages import CreateBook, BookCreated, BookQuery, BookQueryResult
+from examples.books.messages import CreateBook, BookCreated, BookQuery
 from examples.books.models import Book
-from pybus import Dispatcher, RequestRouter
-from pybus.core import signals
-from pybus.core.dependency.providers import Singleton
-
-dp = Dispatcher(
-    queries_router_cls=RequestRouter,  # by default query router is disabled
-)
+from iambus import dispatcher as dp
+from iambus.core import signals
+from iambus.core.dependency.providers import Singleton
 
 
 async def get_storage():
@@ -20,41 +16,36 @@ async def get_storage():
 
 
 # somewhere in your code
-@dp.commands.register(CreateBook, storage=Singleton["storage": get_storage])
+@dp.commands.register(CreateBook, response_event=BookCreated)
 # ensure Singleton dependency name is the same that in handler's args
-async def create_book_handler(command: CreateBook, storage: dict) -> BookCreated:
+async def create_book_handler(command: CreateBook) -> BookCreated:
     """Create book"""
 
     # simplify for example
     print(f'got command {command}')
     book = Book(**dataclasses.asdict(command))
-    storage[book.title] = book
 
     # returning the event leads to emitting it by the dispatcher,
     # another way to do that will be described in classes example
     return BookCreated(book=book)
 
 
-@dp.events.register(BookCreated)
-async def book_created_handler(event: BookCreated) -> None:
+@dp.events.register(BookCreated, storage=Singleton["storage": get_storage])
+async def book_created_handler(event: BookCreated, storage: dict) -> None:
     """Handle book creation"""
     print(f'got event {event}')
+    book = event.book
+    storage[book.title] = book
 
 
 @dp.queries.register(BookQuery, storage=Singleton["storage": get_storage])
 # ensure you did not reassign the type of provider (f.e. from Singleton to Factory)
-async def book_query_handler(query: BookQuery, storage: dict) -> BookQueryResult:
+async def book_query_handler(query: BookQuery, storage: dict) -> list[Book]:
     """Handle book query"""
     # find books in storage...
     books = [book for title, book in storage.items() if title == query.title]
     print(f"got query {query}, found {len(books)} books")
-    return BookQueryResult(books=books)
-
-
-@dp.events.register(BookQueryResult)
-async def listen_query(event: BookQueryResult) -> None:
-    """Listen query result handler"""
-    print(f'query result: {event}')
+    return books
 
 
 @dp.events.register('on startup')
@@ -71,13 +62,15 @@ async def main() -> None:
 
     dp.start()  # start router's engines
 
-    await dp.events.send('on startup')
-    await dp.commands.send(
-        CreateBook(title="Philosopher's Stone", author="J. K. Rowling", year=1997)
+    await dp.handle('on startup')
+    await dp.handle(
+        CreateBook(title="Philosopher's Stone", author="J. K. Rowling", year=1997),
+        key='createBook',
     )
-    await dp.queries.send(
-        BookQuery(title="Philosopher's Stone")
+    books = await dp.handle(
+        BookQuery(title="Philosopher's Stone"), wait_for_response=True,
     )
+    print(f"found {books=}")
 
     await signals.wait_for_shutdown()
 

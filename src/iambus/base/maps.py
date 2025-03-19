@@ -6,7 +6,7 @@ from iambus.core.api.typing import (
     HandlerType,
     MapReturnType,
     MessageType,
-    PyBusHandlerMeta,
+    PyBusHandlerMeta, make_key,
 )
 from iambus.core.exceptions import HandlerDoesNotExist
 from iambus.core.types import EMPTY
@@ -29,10 +29,10 @@ class EventHandlerMap(AbstractHandlerMap[HandlerFrozenSet]):
         if self._frozen:
             raise RuntimeError("map is frozen")
 
-        self._storage.setdefault(self.make_key(message), set()).add(handler)
+        self._storage.setdefault(make_key(message), set()).add(handler)
 
     def find(self, key: MessageType) -> MapReturnType:
-        return self._storage.get(self.make_key(key), EmptySet)
+        return self._storage.get(make_key(key), EmptySet)
 
     @classmethod
     def freeze(cls, val: set[HandlerType]) -> MapReturnType:
@@ -51,13 +51,13 @@ class RequestHandlerMap(AbstractHandlerMap[HandlerType]):
         if self._frozen:
             raise RuntimeError("map is frozen")
 
-        self._storage[self.make_key(message)] = handler
+        self._storage[make_key(message)] = handler
 
     def find(self, key: MessageType) -> MapReturnType:
         try:
-            return self._storage[self.make_key(key)]
-        except KeyError:
-            raise HandlerDoesNotExist(pymessage=key)
+            return self._storage[make_key(key)]
+        except KeyError as exc:
+            raise HandlerDoesNotExist(pymessage=key) from exc
 
     @classmethod
     def freeze(cls, val: HandlerType) -> MapReturnType:

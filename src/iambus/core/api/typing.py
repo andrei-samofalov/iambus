@@ -1,3 +1,4 @@
+import inspect
 import typing as t
 
 if t.TYPE_CHECKING:
@@ -13,9 +14,12 @@ if t.TYPE_CHECKING:
 Message: t.TypeAlias = type[t.Any] | t.Hashable
 MessageType = t.TypeVar("MessageType", bound=Message)
 
+TypeKey = t.TypeVar("TypeKey", type, str)
+
+
 P = t.ParamSpec("P")
 PyBusHandler = t.TypeVar("PyBusHandler", bound="AbstractHandler")
-PyBusWrappedHandler = t.TypeVar("PyBusWrappedHandler", bound="AbstractHandlerWrapper")
+WrappedHandler = t.TypeVar("WrappedHandler", bound="AbstractHandlerWrapper")
 
 PyBusHandlerMeta = t.TypeVar("PyBusHandlerMeta", bound="HandlerMetaDataProtocol")
 
@@ -24,7 +28,7 @@ HandlerReturnType: t.TypeAlias = t.Awaitable[ReturnType]
 
 HandlerType: t.TypeAlias = t.Union[
     PyBusHandler,
-    PyBusWrappedHandler,
+    WrappedHandler,
     t.Callable[[], HandlerReturnType],
     t.Callable[[MessageType], HandlerReturnType],
     t.Callable[[MessageType, P.kwargs], HandlerReturnType],
@@ -37,3 +41,11 @@ EngineType = t.TypeVar("EngineType", bound="AbstractEngine")
 
 EventRouterType = t.TypeVar('EventRouterType', bound="AbstractMessageRouter")
 RequestRouterType = t.TypeVar('RequestRouterType', bound="AbstractMessageRouter")
+
+Callback: t.TypeAlias = t.Callable[[...], t.Awaitable[...]]
+
+
+def make_key(message: MessageType) -> TypeKey:
+    """Return message key"""
+    m_type = message if inspect.isclass(message) else type(message)
+    return m_type if not issubclass(m_type, str) else message

@@ -19,7 +19,14 @@ class AbstractBaseMessageRouter(
         message: MessageType,
         handler: HandlerType,
         argname: t.Optional[str],
+        response_event: t.Optional[MessageType],
         **initkwargs,
     ) -> sig.HandlerMetaData:
         """Return Handler meta"""
-        return sig.check_signature(handler, message, argname, **initkwargs)
+        return sig.check_signature(
+            handler,
+            message,
+            argname,
+            response_event,
+            **initkwargs
+        )

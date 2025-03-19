@@ -21,10 +21,4 @@ class BookQuery(Query):
     """Book Query model"""
     title: str
 
-
-@dataclasses.dataclass(frozen=True, slots=True)
-class BookQueryResult(Event):
-    """Book Query result model"""
-    books: list[Book] = dataclasses.field(default_factory=list)
-
 ```

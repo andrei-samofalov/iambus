@@ -1,7 +1,10 @@
-# async-py-bus
+# iambus - intelligence async message bus
 
-The library is designed for asynchronous `event-driven` and `cqrs` Python projects,
-has no third-party dependencies, and is useful for handling domain events, queries and commands.
+`sounds like a poem`
+
+The library is designed for asynchronous `event-driven` Python projects, mostly for modular monoliths or microservice nodes, 
+has no third-party dependencies.
+
 
 See [more examples](https://github.com/andrei-samofalov/async-py-bus/tree/master/docs/examples) on
 GitHub

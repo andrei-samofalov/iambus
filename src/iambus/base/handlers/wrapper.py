@@ -30,7 +30,7 @@ class HandlerWrapper(AbstractHandlerWrapper):
         else:
             result = await handler(message)
 
-        if result and not hasattr(self._handler, 'add_event'):
+        if self._response_event and isinstance(result, self._response_event):
             await self.add_event(result)
 
         return result

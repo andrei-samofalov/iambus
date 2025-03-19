@@ -1,6 +1,5 @@
 import abc
 import copy
-import inspect
 from types import MappingProxyType
 from typing import Generic
 
@@ -10,7 +9,8 @@ from iambus.core.api.typing import (
     MapReturnType,
     MessageType,
     PyBusHandlerMeta,
-    PyBusWrappedHandler,
+    WrappedHandler,
+    make_key,
 )
 
 
@@ -33,12 +33,6 @@ class AbstractHandlerMap(Generic[MapReturnType], metaclass=abc.ABCMeta):
         """Return frozen state"""
         return self._frozen
 
-    @classmethod
-    def make_key(cls, message: MessageType) -> MessageType:
-        """Return message key"""
-        m_type = message if inspect.isclass(message) else type(message)
-        return m_type if not issubclass(m_type, str) else message
-
     def build(self):
         """Build map. Handlers would be frozen after."""
         if self._frozen:
@@ -56,10 +50,10 @@ class AbstractHandlerMap(Generic[MapReturnType], metaclass=abc.ABCMeta):
 
     def can_handle(self, message: MessageType) -> bool:
         """Return True if the given message key can be handled."""
-        return self.make_key(message) in self._storage
+        return make_key(message) in self._storage
 
     @abc.abstractmethod
-    def add(self, message: MessageType, handler: PyBusWrappedHandler) -> None:
+    def add(self, message: MessageType, handler: WrappedHandler) -> None:
         """Add handler to the map."""
 
     @abc.abstractmethod

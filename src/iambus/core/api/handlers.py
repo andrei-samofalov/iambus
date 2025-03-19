@@ -49,6 +49,7 @@ class AbstractHandlerWrapper(
     ):
         self._handler = meta.handler
         self._message = meta.message
+        self._response_event = meta.response_event
         self._inject = meta.inject
         self._argname = meta.argname
 
@@ -64,3 +65,4 @@ class HandlerMetaDataProtocol(t.Protocol):
     initkwargs: dict = {}
     argname: t.Optional[str] = EMPTY
     message: t.Optional[MessageType] = EMPTY
+    response_event: t.Optional[MessageType] = None

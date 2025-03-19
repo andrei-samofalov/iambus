@@ -42,3 +42,8 @@ def get_async_result(coro):
 
     loop.call_soon_threadsafe(_callback)
     return future.result()
+
+
+def loop_time() -> float:
+    """Return the current loop time."""
+    return asyncio.get_event_loop().time()

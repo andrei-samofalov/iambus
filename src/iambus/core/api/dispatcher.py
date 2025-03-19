@@ -2,16 +2,12 @@ import typing as t
 
 from iambus.core.api.typing import (
     EventRouterType,
-    HandlerType,
-    MessageType,
-    PyBusWrappedHandler,
-    RequestRouterType,
+    RequestRouterType, MessageType,
 )
-from iambus.core.types import EMPTY
 
 
 @t.runtime_checkable
-class DispatcherProtocol(t.Protocol[EventRouterType, RequestRouterType, PyBusWrappedHandler]):
+class DispatcherProtocol(t.Protocol[EventRouterType, RequestRouterType]):
     """DispatcherProtocol protocol."""
 
     @property
@@ -26,33 +22,10 @@ class DispatcherProtocol(t.Protocol[EventRouterType, RequestRouterType, PyBusWra
     def queries(self) -> RequestRouterType:
         """Return queries proxy"""
 
-    @property
-    def is_started(self) -> bool:
-        """Return True if dispatcher has started."""
-
-    def register_event_handler(
+    async def handle(
         self,
         message: MessageType,
-        handler: HandlerType,
-        argname: t.Optional[str] = EMPTY,
-        **initkwargs,
-    ) -> PyBusWrappedHandler:
-        """Register event handler."""
-
-    def register_command_handler(
-        self,
-        message: MessageType,
-        handler: HandlerType,
-        argname: t.Optional[str] = EMPTY,
-        **initkwargs,
-    ) -> PyBusWrappedHandler:
-        """Register command handler."""
-
-    def register_query_handler(
-        self,
-        message: MessageType,
-        handler: HandlerType,
-        argname: t.Optional[str] = EMPTY,
-        **initkwargs,
-    ) -> PyBusWrappedHandler:
-        """Register query handler."""
+        key: t.Optional[t.AnyStr],
+        wait_for_response: bool,
+    ) -> t.Awaitable[...]:
+        """Handle a message"""

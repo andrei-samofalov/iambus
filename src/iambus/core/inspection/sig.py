@@ -25,12 +25,14 @@ class HandlerMetaData(NamedTuple):
     initkwargs: dict = {}
     argname: Optional[str] = EMPTY
     message: Optional[Message] = EMPTY
+    response_event: Optional[Message] = None
 
 
 def check_signature(
     handler: HandlerType,
     message: Message = EMPTY,
     argname: Optional[str] = EMPTY,
+    response_event: Optional[Message] = None,
     **initkwargs: dict[str, Any],
 ) -> HandlerMetaData:
     """Check signature of the handler"""
@@ -66,8 +68,11 @@ def check_signature(
         # - если нет, то это норм, просто заканчиваем проверку,
         # а сообщение в хэндлер не передаем
         return HandlerMetaData(
-            handler=handler, inject=False,
-            message=message, initkwargs=initkwargs,
+            handler=handler,
+            inject=False,
+            message=message,
+            response_event=response_event,
+            initkwargs=initkwargs,
         )
 
     error = exc.HandlerSignatureError(pymessage=message, handler=handler)
@@ -103,5 +108,5 @@ def check_signature(
 
     return HandlerMetaData(
         handler=cls, inject=True, argname=argname,
-        message=message, initkwargs=initkwargs,
+        message=message, response_event=response_event, initkwargs=initkwargs,
     )
