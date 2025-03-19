@@ -2,9 +2,9 @@
 
 `sounds like a poem`
 
-The library is designed for asynchronous `event-driven` Python projects, mostly for modular monoliths or microservice nodes, 
+The library is designed for asynchronous `event-driven` Python projects, mostly for modular
+monoliths or microservice nodes,
 has no third-party dependencies.
-
 
 See [more examples](https://github.com/andrei-samofalov/iambus/tree/iambus-rework/docs/examples) on
 GitHub
@@ -23,16 +23,18 @@ from iambus import dispatcher as dp
 ```
 
 Note that the event, command and query engines are not enabled by default.
-Each of them would be instantiated with default routers (if not passed specific class) 
+Each of them would be instantiated with default routers (if not passed specific class)
 with the first handler registered to this router.
 
-You can also override default engines, routers and dispatcher and pass your classes 
-to the Dispatcher constructor: 
+You can also override default engines, routers and dispatcher and pass your classes
+to the Dispatcher constructor:
+
 ```python
 from iambus import Dispatcher, RequestRouter
 
+
 class CustomRequestRouter(RequestRouter):
-  def bind(
+    def bind(
         self,
         message: MessageType,
         handler: HandlerType,
@@ -40,7 +42,8 @@ class CustomRequestRouter(RequestRouter):
         response_event: t.Optional[MessageType] = None,
         **initkwargs,
     ) -> PyBusWrappedHandler:
-        # your implementation here
+# your implementation here
+
 
 dp = Dispatcher(
     queries_router_cls=CustomRequestRouter,
@@ -53,10 +56,12 @@ A basic handler is an asynchronous function that takes either one or zero argume
 
 ```python
 async def handler_with_arg(event: EventType):
-    # do something with event...
+
+
+# do something with event...
 
 async def handler_without_arg():
-    # do something
+# do something
 ```
 
 Additionally, a handler can accept any number of keyword arguments (how to pass them to the handler
@@ -90,9 +95,9 @@ class CustomHandler:
     def __init__(self, repo: RepoType):
         self._repo = repo
 
-    async def __call__(self, cmd: CreateUserCommand):
+    async def __call__(self, cmd: CreateUserCommand) -> User:
         user = await self._repo.create(cmd.data)
-        return UserCreated(data=user)
+        return user
 ```
 
 The same behavior applies if the handler is a simple function but takes more than one parameter
@@ -106,20 +111,27 @@ async def create_user_handler(cmd: CreateUserCommand, repo: RepoType):
 
 # main.py
 user_repo = UserRepoImpl()
-dp.commands.bind(CreateUserCommand, handler=create_user_handler, repo=user_repo, response_event=UserCreated)
+dp.commands.bind(CreateUserCommand, handler=create_user_handler, repo=user_repo,
+                 response_event=UserCreated)
+dp.commands.bind(CreateUserCommand, handler=CustomHandler, repo=user_repo)
+# note that this double binding would raise an error in runtime
 ```
 
-You may notice that both the `create_user_handler` function and the `__call__` method of
-the `CustomHandler` class return an event.
+You may notice that the `create_user_handler` function returns an event.
 This allows you to pass new outgoing events to the dispatcher, which will forward them
 to the appropriate handler.
-In the case of a class implementing `HandlerProtocol`, additionally events can be added during 
+In the case of a class implementing `HandlerProtocol`, additionally events can be added during
 processing inside the `handle` method.
-You must specify `response_event` arg to bind or register methods to allow this work. 
+You must specify `response_event` arg to `bind` or `register` methods to allow this work.
 Otherwise strict return value would be returned.
 
-You can get the return value if `wait_for_response` arg would be set to `True`. 
+You can get the return value if `wait_for_response` arg would be set to `True`.
 It is useful for queries and commands.
+
+```python
+created_user = await dp.handle(CreateUserCommand(), wait_for_response=True)
+
+```
 
 ### Handlers binding
 
@@ -151,6 +163,15 @@ During this operation, the handler map will be finalized,
 and you won’t be able to register new handlers. Please keep this in mind.
 
 If no handlers registered dispatcher will drop setup.
+
+### Sending messages to the Dispatcher
+
+You can send the message by calling `handle` method of the Dispatcher instance or it's engines.
+
+```python
+await dp.handle('on startup')
+await dp.events.handle('on startup')
+```
 
 ### Utils
 
