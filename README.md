@@ -6,7 +6,7 @@ The library is designed for asynchronous `event-driven` Python projects, mostly 
 has no third-party dependencies.
 
 
-See [more examples](https://github.com/andrei-samofalov/async-py-bus/tree/master/docs/examples) on
+See [more examples](https://github.com/andrei-samofalov/iambus/tree/iambus-rework/docs/examples) on
 GitHub
 
 ## Basic usage
@@ -16,10 +16,10 @@ It handles three types of messages: `events`, `commands` and `queries`.
 
 ### Dispatcher initializing
 
-You can use the default object from `pybus`
+You can use the default object from `iambus`
 
 ```python
-from pybus import dispatcher as dp
+from iambus import dispatcher as dp
 ```
 
 Note that the event, command and query engines are not enabled by default.
@@ -29,7 +29,7 @@ with the first handler registered to this router.
 You can also override default engines, routers and dispatcher and pass your classes 
 to the Dispatcher constructor: 
 ```python
-from pybus import Dispatcher, RequestRouter
+from iambus import Dispatcher, RequestRouter
 
 class CustomRequestRouter(RequestRouter):
   def bind(
@@ -37,6 +37,7 @@ class CustomRequestRouter(RequestRouter):
         message: MessageType,
         handler: HandlerType,
         argname: t.Optional[str] = EMPTY,
+        response_event: t.Optional[MessageType] = None,
         **initkwargs,
     ) -> PyBusWrappedHandler:
         # your implementation here
@@ -105,7 +106,7 @@ async def create_user_handler(cmd: CreateUserCommand, repo: RepoType):
 
 # main.py
 user_repo = UserRepoImpl()
-dp.commands.bind(CreateUserCommand, handler=create_user_handler, repo=user_repo)
+dp.commands.bind(CreateUserCommand, handler=create_user_handler, repo=user_repo, response_event=UserCreated)
 ```
 
 You may notice that both the `create_user_handler` function and the `__call__` method of
@@ -114,6 +115,11 @@ This allows you to pass new outgoing events to the dispatcher, which will forwar
 to the appropriate handler.
 In the case of a class implementing `HandlerProtocol`, additionally events can be added during 
 processing inside the `handle` method.
+You must specify `response_event` arg to bind or register methods to allow this work. 
+Otherwise strict return value would be returned.
+
+You can get the return value if `wait_for_response` arg would be set to `True`. 
+It is useful for queries and commands.
 
 ### Handlers binding
 
@@ -121,11 +127,6 @@ We’ve talked a lot about how to declare handlers; now let’s register them.
 
 Currently, there are several ways to do this:
 
-* Pass the handler to the dispatcher’s `register_<message>_handler` method,
-  where `<message>` is one of `event`, `command`, or `query`.
-  ```python
-  dp.register_event_handler(UserCreated, create_user_handler)
-  ```
 * Use the `bind` method of one of the dispatcher’s routers (`dp.events`, `dp.commands`,
   `dp.queries`).
   ```python
