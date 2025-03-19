@@ -27,5 +27,5 @@ class DispatcherProtocol(t.Protocol[EventRouterType, RequestRouterType]):
         message: MessageType,
         key: t.Optional[t.AnyStr],
         wait_for_response: bool,
-    ) -> t.Awaitable[...]:
+    ) -> t.Any:
         """Handle a message"""

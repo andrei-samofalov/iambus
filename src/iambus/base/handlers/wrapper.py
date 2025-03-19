@@ -32,8 +32,8 @@ class HandlerWrapper(AbstractHandlerWrapper):
 
         if self._response_event and isinstance(result, self._response_event):
             await self.add_event(result)
-
-        return result
+        else:
+            return result
 
     async def can_handle(self, message: MessageType) -> bool:
         """Return True if handler can handle the given message."""
